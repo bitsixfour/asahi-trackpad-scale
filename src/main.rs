@@ -36,7 +36,7 @@ fn render(frame: &mut Frame, sens: &Sens) {
         .direction(Direction::Vertical)
         .constraints(
             [Constraint::Percentage(30),
-            Constraint::Percentage(30),
+            Constraint::Percentage(40),
             Constraint::Percentage(30)])
         .split(area);
 
@@ -50,6 +50,17 @@ fn render(frame: &mut Frame, sens: &Sens) {
         .border_style(Style::default().fg(Color::White));
     let top_inner = top_block.inner(top);
     frame.render_widget(top_block, top);
+
+    let middle_block = Block::default()
+        .title("graph weight view ")
+        .borders(Borders::ALL)
+        .border_style(Style::default().fg(Color::White));
+    let middle_inner = middle_block.inner(middle);
+    frame.render_widget(middle_block, middle);
+
+
+
+
     let weight = sens.calc_weight();
     let text = format!(
         "Device: {}\nPressure: {}\nFolder: /dev/input/event2
