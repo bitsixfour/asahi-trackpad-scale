@@ -90,11 +90,10 @@ fn render(frame: &mut Frame, sens: &Sens, vec: &mut Vec<(f64,f64)>) {
 
     let footer = Paragraph::new(para_two).wrap(Wrap { trim: true });
     frame.render_widget(footer, bottom_inner);
-    sort_graph(vec, pressure);
     render_chart(frame, middle_inner, vec, pressure);
 }
 
-pub fn render_chart(frame: &mut Frame, area: Rect, mut vec: &Vec<(f64, f64)>, pres: i32) {
+pub fn render_chart(frame: &mut Frame, area: Rect, vec: &mut Vec<(f64, f64)>, pres: i32) {
     let data = sort_graph(vec, pres);
 
     let dataset = Dataset::default()
