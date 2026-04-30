@@ -1,7 +1,7 @@
 use evdev::{Device, EventSummary, AbsoluteAxisCode};
 use std::sync::{Arc, Mutex};
 use std::thread;
-
+const M: f64 = 1000.0;
 pub struct Sens {
     pub pressure: Arc<Mutex<i32>>,
     pub name: String,
@@ -40,5 +40,9 @@ impl Sens {
 
     pub fn get_pressure(&self) -> i32 {
         *self.pressure.lock().unwrap()
+    }
+    pub fn calc_weight(&self) -> f64 {
+        let str: f64 = self.get_pressure() as f64;
+        str / M
     }
 }

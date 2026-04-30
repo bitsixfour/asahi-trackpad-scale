@@ -34,11 +34,15 @@ fn render(frame: &mut Frame, sens: &Sens) {
 
     let chunks = Layout::default()
         .direction(Direction::Vertical)
-        .constraints([Constraint::Percentage(70), Constraint::Percentage(30)])
+        .constraints(
+            [Constraint::Percentage(30),
+            Constraint::Percentage(30),
+            Constraint::Percentage(30)])
         .split(area);
 
     let top = chunks[0];
-    let bottom = chunks[1];
+    let middle = chunks[1];
+    let bottom = chunks[2];
 
     let top_block = Block::default()
         .title("Sense")
@@ -46,10 +50,13 @@ fn render(frame: &mut Frame, sens: &Sens) {
         .border_style(Style::default().fg(Color::White));
     let top_inner = top_block.inner(top);
     frame.render_widget(top_block, top);
-
+    let weight = sens.calc_weight();
     let text = format!(
-        "Device: {}\nPressure: {}\n\nPress 'q' to quit.",
-        sens.name, pressure
+        "Device: {}\nPressure: {}\nFolder: /dev/input/event2
+        Weight: {} kg
+        \n\nPress 'q' to quit.",
+
+        sens.name, pressure, weight
     );
     let paragraph = Paragraph::new(text).wrap(Wrap { trim: true });
     frame.render_widget(paragraph, top_inner);
@@ -61,10 +68,12 @@ fn render(frame: &mut Frame, sens: &Sens) {
     let bottom_inner = bottom_block.inner(bottom);
     frame.render_widget(bottom_block, bottom);
 
-    let footer = Paragraph::new("Status: running \n {}").wrap(Wrap { trim: true });
+    let para_two = format!("Status: running \n State: {}", get_status(sens));
+
+
+    let footer = Paragraph::new(para_two).wrap(Wrap { trim: true });
     frame.render_widget(footer, bottom_inner);
 }
-
 fn should_quit() -> Result<bool> {
     if event::poll(Duration::from_millis(125))? {
         let ev = event::read()?;
@@ -81,8 +90,8 @@ fn get_status(sens: &Sens) -> &str {
     let str: i32 = sens.get_pressure();
     match str {
         0..=10 => "put finger on haptic pad",
-        10..=30 => "place object: try to minimize force",
-        30..=9999 => "Okkei",
+        11..=30 => "place object: try to minimize force",
+        31..=9999 => "Okkei",
         _ => "no force exerted",
 
     }
