@@ -12,7 +12,6 @@ use ratatui::symbols::Marker;
 mod sens;
 use sens::Sens;
 mod approx;
-use approx::Graph;
 
 type Result<T> = anyhow::Result<T>;
 
@@ -89,12 +88,13 @@ fn render(frame: &mut Frame, sens: &Sens) {
 
     let footer = Paragraph::new(para_two).wrap(Wrap { trim: true });
     frame.render_widget(footer, bottom_inner);
-    let mut vec = VecDeque::<(f64, f64)>::new();
-    render_chart(frame, middle_inner, &vec);
+    let mut vec = VecDeque::<(f64, f64)> = VecDeque::with_capacity(10);
+    vec = sort_vec(vec);
+    render_chart(frame, middle_inner, &vec, pressure);
 }
 
-pub fn render_chart(frame: &mut Frame, area: Rect, vec: &VecDeque<(f64, f64)>) {
-    let data: Vec<(f64, f64)> = vec.iter().copied().collect();
+pub fn render_chart(frame: &mut Frame, area: Rect, mut vec: &VecDeque<(f64, f64)>, pres: i32) {
+    let data = sort_graph(vec, pres);
 
     let dataset = Dataset::default()
         .name("Stonks")
